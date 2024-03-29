@@ -9,14 +9,21 @@ import rain_icon from '../assets/rain.png';
 import search_icon from '../assets/search.png';
 import snow_icon from '../assets/snow.png';
 import wind_icon from '../assets/wind.png';
+import pressure_icon from '../assets/pressure.svg'
+import visibility_icon from '../assets/visibility.svg'
+import cloudiness_icon from '../assets/cloud.svg'
 
 const WeatherApp = () => {
   const [weatherData, setWeatherData] =useState({
     humidity: '',
     windSpeed: '',
     temperature: '',
+    pressure: '',
     location: '',
     visibility: '',
+    cloudiness: '',
+    sunrise: '',
+    sunset: '',
     timezone: '',
   })
 
@@ -65,12 +72,30 @@ const WeatherApp = () => {
     const currentHour = currentTime.getUTCHours() + timezoneHours;
     const currentMinute = currentTime.getUTCMinutes();
 
+
+    // Valores de las marcas de tiempo UNIX
+    const sunriseTimestamp = data.sys.sunrise;
+    const sunsetTimestamp = data.sys.sunset;
+
+    // Convertir las marcas de tiempo a objetos de fecha
+    const sunriseDate = new Date(sunriseTimestamp * 1000); // Multiplicar por 1000 para convertir de segundos a milisegundos
+    const sunsetDate = new Date(sunsetTimestamp * 1000);
+
+    // Formatear las fechas en formato legible
+    const options = { hour: 'numeric', minute: 'numeric', timeZone: 'UTC' };
+    const formattedSunrise = sunriseDate.toLocaleDateString('es-ES', options);
+    const formattedSunset = sunsetDate.toLocaleDateString('es-ES', options);
+
     setWeatherData({
       humidity: data.main.humidity + ' %',
       windSpeed: data.wind.speed + ' km/h',
       temperature: data.main.temp + '°c',
+      pressure: data.main.pressure + ' hPa',
       location: data.name,
       visibility: data.visibility +' km',
+      cloudiness: data.clouds.all + ' %',
+      sunrise: formattedSunrise,
+      sunset: formattedSunset,
       timezone: `${currentHour}:${currentMinute}`,
     });
 
@@ -110,6 +135,8 @@ const WeatherApp = () => {
       </div>
       <div className="weather-temp">{weatherData.temperature}</div>
       <div className="weather-location">{weatherData.location}</div>
+      <div className="weather-location">{weatherData.sunrise}</div>
+      <div className="weather-location">{weatherData.sunset}</div>
       <div className="data-container">
 
         <div className="element">
@@ -128,13 +155,29 @@ const WeatherApp = () => {
           </div>
         </div>
 
-        {/* <div className="element">
-          <img src={wind_icon} alt="" className="icon" />
+        <div className="element">
+          <img src={pressure_icon} alt="" className="icon" />
           <div className="data">
-            <div className="wind-rate">{weatherData.visibility}</div>
+            <div className="pressure-rate">{weatherData.pressure}</div>
+            <div className="text">Pressure</div>
+          </div>
+        </div>
+
+        <div className="element">
+          <img src={visibility_icon} alt="" className="icon" />
+          <div className="data">
+            <div className="visibility-rate">{weatherData.visibility}</div>
             <div className="text">Visibility</div>
           </div>
-        </div> */}
+        </div>
+
+        <div className="element">
+          <img src={cloudiness_icon} alt="" className="icon" />
+          <div className="data">
+            <div className="cloudiness-rate">{weatherData.cloudiness}</div>
+            <div className="text">Cloudiness</div>
+          </div>
+        </div>
 
       </div>
     </div>
